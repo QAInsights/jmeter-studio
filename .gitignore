@@ -1,0 +1,6 @@
+.agents
+.vscode
+.idea
+*.log
+*.jar
+.windsurf
