@@ -1,0 +1,22 @@
+[
+  {
+    "id": "aura-dark",
+    "displayName": "Aura Dark",
+    "propertiesPath": "com/qainsights/jmeter/themes/aura-dark/theme.properties",
+    "iconDir": "com/qainsights/jmeter/themes/aura-dark",
+    "toolbarPropertiesPath": "com/qainsights/jmeter/themes/aura-dark/icons-toolbar.properties",
+    "treeIconPropertiesPath": "com/qainsights/jmeter/themes/aura-dark/icon_aura.properties",
+    "dark": true,
+    "pro": false
+  },
+  {
+    "id": "aura-light",
+    "displayName": "Aura Light",
+    "propertiesPath": "com/qainsights/jmeter/themes/aura-light/theme.properties",
+    "iconDir": "com/qainsights/jmeter/themes/aura-light",
+    "toolbarPropertiesPath": "com/qainsights/jmeter/themes/aura-light/icons-toolbar.properties",
+    "treeIconPropertiesPath": "com/qainsights/jmeter/themes/aura-light/icon_aura.properties",
+    "dark": false,
+    "pro": false
+  }
+]
