@@ -48,20 +48,6 @@
     "pro": false
   },
   {
-    "id": "atom-one-dark",
-    "displayName": "Atom One Dark",
-    "lafClass": "com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatMTAtomOneDarkIJTheme",
-    "dark": true,
-    "pro": false
-  },
-  {
-    "id": "atom-one-light",
-    "displayName": "Atom One Light",
-    "lafClass": "com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatMTAtomOneLightIJTheme",
-    "dark": false,
-    "pro": false
-  },
-  {
     "id": "one-dark",
     "displayName": "One Dark",
     "lafClass": "com.formdev.flatlaf.intellijthemes.FlatOneDarkIJTheme",
@@ -80,6 +66,27 @@
     "displayName": "Monokai Pro",
     "lafClass": "com.formdev.flatlaf.intellijthemes.FlatMonokaiProIJTheme",
     "dark": true,
+    "pro": false
+  },
+  {
+    "id": "arc-dark",
+    "displayName": "Arc Dark",
+    "lafClass": "com.formdev.flatlaf.intellijthemes.FlatArcDarkIJTheme",
+    "dark": true,
+    "pro": false
+  },
+  {
+    "id": "gradianto-deep-ocean",
+    "displayName": "Gradianto Deep Ocean",
+    "lafClass": "com.formdev.flatlaf.intellijthemes.FlatGradiantoDeepOceanIJTheme",
+    "dark": true,
+    "pro": false
+  },
+  {
+    "id": "gray",
+    "displayName": "Gray",
+    "lafClass": "com.formdev.flatlaf.intellijthemes.FlatGrayIJTheme",
+    "dark": false,
     "pro": false
   }
 ]
