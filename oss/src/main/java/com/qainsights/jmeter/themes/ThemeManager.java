@@ -5,6 +5,10 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import javax.swing.SwingUtilities;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.awt.Window;
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,6 +32,7 @@ import java.util.prefs.Preferences;
  */
 public final class ThemeManager {
 
+    private static final Logger logger = LoggerFactory.getLogger(ThemeManager.class);
     private static final String THEMES_MANIFEST = "com/qainsights/jmeter/themes/themes.json";
     private static final Preferences PREFS = Preferences.userNodeForPackage(ThemeManager.class);
     private static final String PREF_KEY = "aura.theme.active";
@@ -70,15 +75,15 @@ public final class ThemeManager {
                     if (descriptors != null) {
                         for (ThemeDescriptor desc : descriptors) {
                             themes.put(desc.getId(), desc);
-                            System.out.println("[AuraTheme] Registered theme: " + desc.getDisplayName());
+                            logger.info("[AuraTheme] Registered theme: " + desc.getDisplayName());
                         }
                     }
                 } catch (IOException e) {
-                    System.err.println("[AuraTheme] Error reading themes manifest: " + e.getMessage());
+                    logger.error("[AuraTheme] Error reading themes manifest: " + e.getMessage());
                 }
             }
         } catch (IOException e) {
-            System.err.println("[AuraTheme] Error scanning for theme manifests: " + e.getMessage());
+            logger.error("[AuraTheme] Error scanning for theme manifests: " + e.getMessage());
         }
     }
 
@@ -126,41 +131,54 @@ public final class ThemeManager {
         }
 
         try {
-            // 1. Apply FlatLaf theme
-            ThemeLaf laf = new ThemeLaf(descriptor);
-            FlatLaf.setup(laf);
+            // 1. Apply FlatLaf theme (IntelliJ-pack or custom properties)
+            if (descriptor.isIJTheme()) {
+                applyIJTheme(descriptor);
+            } else {
+                ThemeLaf laf = new ThemeLaf(descriptor);
+                FlatLaf.setup(laf);
+            }
 
             // 2. Set JMeter toolbar icons property so toolbar uses our icons
             if (descriptor.getToolbarPropertiesPath() != null) {
                 setJMeterProperty(JMETER_TOOLBAR_ICONS_PROP, descriptor.getToolbarPropertiesPath());
-                System.out.println("[AuraTheme] Set toolbar icons: " + descriptor.getToolbarPropertiesPath());
+                logger.info("[AuraTheme] Set toolbar icons: " + descriptor.getToolbarPropertiesPath());
             }
 
             // 3. Set JMeter tree icons property so tree uses our icons
             if (descriptor.getTreeIconPropertiesPath() != null) {
                 setJMeterProperty(JMETER_TREE_ICONS_PROP, descriptor.getTreeIconPropertiesPath());
-                System.out.println("[AuraTheme] Set tree icons: " + descriptor.getTreeIconPropertiesPath());
+                logger.info("[AuraTheme] Set tree icons: " + descriptor.getTreeIconPropertiesPath());
             }
 
-            // 4. Update all existing windows
+            // 4. Reset explicit component style overrides so the new theme's UIManager defaults apply cleanly,
+            //    then update all windows.
             for (Window window : Window.getWindows()) {
+                resetComponentStyles(window);
                 SwingUtilities.updateComponentTreeUI(window);
-                // Force a complete repaint
                 window.repaint();
-                // Recursively repaint all children
-                repaintAll(window);
+                // For IJ themes, updateComponentTreeUI is sufficient — they are well-behaved FlatLaf themes.
+                // For custom properties-based Aura themes, we still need the manual background-forcing pass.
+                if (!descriptor.isIJTheme()) {
+                    repaintAll(window);
+                }
             }
 
             // 5. Trigger toolbar rebuild
             rebuildToolbar();
 
-            // 6. Persist the selection
+            // 6. Persist the selection and flush immediately so it survives process exit
             PREFS.put(PREF_KEY, themeId);
+            try {
+                PREFS.flush();
+            } catch (java.util.prefs.BackingStoreException bse) {
+                logger.warn("[AuraTheme] Warning: could not flush preferences: " + bse.getMessage());
+            }
 
-            System.out.println("[AuraTheme] Applied theme: " + descriptor.getDisplayName());
+            logger.info("[AuraTheme] Applied theme: " + descriptor.getDisplayName());
             return true;
         } catch (Exception e) {
-            System.err.println("[AuraTheme] Failed to apply theme '" + themeId + "': " + e.getMessage());
+            logger.error("[AuraTheme] Failed to apply theme '" + themeId + "': " + e.getMessage());
             e.printStackTrace();
             return false;
         }
@@ -176,10 +194,15 @@ public final class ThemeManager {
         // Clear the tree icons property so JMeter uses its default icons
         clearJMeterProperty(JMETER_TREE_ICONS_PROP);
 
-        // Persist "default" as active theme
+        // Persist "default" as active theme and flush immediately
         PREFS.put(PREF_KEY, DEFAULT_THEME);
+        try {
+            PREFS.flush();
+        } catch (java.util.prefs.BackingStoreException bse) {
+            logger.warn("[AuraTheme] Warning: could not flush preferences: " + bse.getMessage());
+        }
 
-        System.out.println("[AuraTheme] Restored default JMeter theme. Restart required.");
+        logger.info("[AuraTheme] Restored default JMeter theme. Restart required.");
     }
 
     /**
@@ -189,16 +212,20 @@ public final class ThemeManager {
         String savedTheme = getActiveThemeId();
         if (DEFAULT_THEME.equals(savedTheme)) {
             // User chose default — don't apply any Aura theme, don't set icon property
-            System.out.println("[AuraTheme] Default theme selected, skipping Aura theme application.");
+            logger.info("[AuraTheme] Default theme selected, skipping Aura theme application.");
             return;
         }
         if (themes.containsKey(savedTheme)) {
             ThemeDescriptor descriptor = themes.get(savedTheme);
 
-            // Apply the FlatLaf theme
             try {
-                ThemeLaf laf = new ThemeLaf(descriptor);
-                FlatLaf.setup(laf);
+                if (descriptor.isIJTheme()) {
+                    applyIJTheme(descriptor);
+                } else {
+                    // Apply the FlatLaf properties-based theme
+                    ThemeLaf laf = new ThemeLaf(descriptor);
+                    FlatLaf.setup(laf);
+                }
 
                 // Update all existing windows and components
                 for (Window window : Window.getWindows()) {
@@ -207,9 +234,9 @@ public final class ThemeManager {
                     repaintAll(window);
                 }
 
-                System.out.println("[AuraTheme] Startup theme applied: " + descriptor.getDisplayName());
+                logger.info("[AuraTheme] Startup theme applied: " + descriptor.getDisplayName());
             } catch (Exception e) {
-                System.err.println("[AuraTheme] Failed to apply startup theme: " + e.getMessage());
+                logger.error("[AuraTheme] Failed to apply startup theme: " + e.getMessage());
             }
         }
     }
@@ -229,13 +256,13 @@ public final class ThemeManager {
             // Set toolbar icons property BEFORE JMeter loads toolbar
             if (descriptor.getToolbarPropertiesPath() != null) {
                 setJMeterProperty(JMETER_TOOLBAR_ICONS_PROP, descriptor.getToolbarPropertiesPath());
-                System.out.println("[AuraTheme] Early set toolbar icons: " + descriptor.getToolbarPropertiesPath());
+                logger.info("[AuraTheme] Early set toolbar icons: " + descriptor.getToolbarPropertiesPath());
             }
 
             // Set tree icons property BEFORE JMeter loads tree
             if (descriptor.getTreeIconPropertiesPath() != null) {
                 setJMeterProperty(JMETER_TREE_ICONS_PROP, descriptor.getTreeIconPropertiesPath());
-                System.out.println("[AuraTheme] Early set tree icons: " + descriptor.getTreeIconPropertiesPath());
+                logger.info("[AuraTheme] Early set tree icons: " + descriptor.getTreeIconPropertiesPath());
             }
         }
     }
@@ -274,6 +301,20 @@ public final class ThemeManager {
     }
 
     /**
+     * Apply a FlatLaf IntelliJ-pack theme by reflectively calling its {@code setup()} static method.
+     * This avoids a compile-time dependency on the specific theme subclass.
+     *
+     * @param descriptor theme descriptor with a non-null {@code lafClass}
+     * @throws Exception if the class cannot be found or {@code setup()} fails
+     */
+    private static void applyIJTheme(ThemeDescriptor descriptor) throws Exception {
+        String className = descriptor.getLafClass();
+        Class<?> themeClass = Class.forName(className);
+        themeClass.getMethod("setup").invoke(null);
+        System.out.println("[AuraTheme] Applied IJ theme via: " + className);
+    }
+
+    /**
      * Trigger a toolbar rebuild by firing a locale change event.
      */
     private static void rebuildToolbar() {
@@ -295,9 +336,36 @@ public final class ThemeManager {
     }
 
     /**
+     * Recursively clear explicitly-set background, foreground, and opaque flags on all components
+     * in a container so that the incoming theme's UIManager defaults take full effect.
+     *
+     * <p>When a previous Aura theme called {@code setBackground(color)} directly on components,
+     * those values are stored as client state and survive {@link SwingUtilities#updateComponentTreeUI}.
+     * Nulling them out restores normal LAF inheritance before we apply the new theme.</p>
+     */
+    private static void resetComponentStyles(java.awt.Container container) {
+        for (java.awt.Component comp : container.getComponents()) {
+            if (comp instanceof javax.swing.JComponent) {
+                javax.swing.JComponent jcomp = (javax.swing.JComponent) comp;
+                // Remove explicit background/foreground so UIManager defaults take over
+                jcomp.setBackground(null);
+                jcomp.setForeground(null);
+                // Restore default opaque behaviour (panels opaque, labels non-opaque etc.)
+                // Setting to false then letting updateComponentTreeUI restore the correct value
+                // is safer than leaving the Aura-forced 'true' on non-opaque components.
+                jcomp.setOpaque(false);
+            }
+            if (comp instanceof java.awt.Container) {
+                resetComponentStyles((java.awt.Container) comp);
+            }
+        }
+    }
+
+    /**
      * Recursively repaint all components in a container and force background colors.
      */
     private static void repaintAll(java.awt.Container container) {
+
         for (java.awt.Component comp : container.getComponents()) {
             // Force opaque and background for all JComponents
             if (comp instanceof javax.swing.JComponent) {

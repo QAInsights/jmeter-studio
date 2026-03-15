@@ -6,6 +6,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Generic FlatLaf subclass that loads theme-specific properties at runtime.
  * Works for both dark and light themes — the base class is chosen from the descriptor.
@@ -13,6 +16,7 @@ import java.util.Properties;
 public class ThemeLaf extends FlatPropertiesLaf {
 
     private final ThemeDescriptor descriptor;
+    private static final Logger logger = LoggerFactory.getLogger(ThemeLaf.class);
 
     public ThemeLaf(ThemeDescriptor descriptor) {
         super(descriptor.getDisplayName(), loadProperties(descriptor));
@@ -68,10 +72,10 @@ public class ThemeLaf extends FlatPropertiesLaf {
                 if (is != null) {
                     props.load(is);
                 } else {
-                    System.err.println("[AuraTheme] Could not find theme properties: " + path);
+                    logger.error("[AuraTheme] Could not find theme properties: " + path);
                 }
             } catch (IOException e) {
-                System.err.println("[AuraTheme] Error loading theme properties: " + e.getMessage());
+                logger.error("[AuraTheme] Error loading theme properties: " + e.getMessage());
             }
         }
         return props;

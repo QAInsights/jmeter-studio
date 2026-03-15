@@ -14,6 +14,9 @@ public class ThemeDescriptor {
     private String treeIconPropertiesPath;
     private boolean dark;
     private boolean pro;
+    /** Fully-qualified class name of an IntelliJ-pack theme (e.g. FlatNordIJTheme). When set,
+     *  the theme is applied via reflection instead of a properties file. */
+    private String lafClass;
 
     public ThemeDescriptor() {
     }
@@ -29,6 +32,11 @@ public class ThemeDescriptor {
         this.treeIconPropertiesPath = treeIconPropertiesPath;
         this.dark = dark;
         this.pro = pro;
+    }
+
+    /** Returns true if this is a FlatLaf IntelliJ-pack theme (loaded by class name, not properties). */
+    public boolean isIJTheme() {
+        return lafClass != null && !lafClass.isEmpty();
     }
 
     public String getId() {
@@ -95,8 +103,17 @@ public class ThemeDescriptor {
         this.pro = pro;
     }
 
+    public String getLafClass() {
+        return lafClass;
+    }
+
+    public void setLafClass(String lafClass) {
+        this.lafClass = lafClass;
+    }
+
     @Override
     public String toString() {
-        return "ThemeDescriptor{id='" + id + "', displayName='" + displayName + "', dark=" + dark + ", pro=" + pro + "}";
+        return "ThemeDescriptor{id='" + id + "', displayName='" + displayName + "', dark=" + dark
+                + ", pro=" + pro + ", lafClass='" + lafClass + "'}";
     }
 }

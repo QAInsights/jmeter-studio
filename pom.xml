@@ -33,6 +33,11 @@
                 <version>${flatlaf.version}</version>
             </dependency>
             <dependency>
+                <groupId>com.formdev</groupId>
+                <artifactId>flatlaf-intellij-themes</artifactId>
+                <version>${flatlaf.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.apache.jmeter</groupId>
                 <artifactId>ApacheJMeter_core</artifactId>
                 <version>${jmeter.version}</version>

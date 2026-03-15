@@ -22,6 +22,10 @@
             <artifactId>flatlaf</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.formdev</groupId>
+            <artifactId>flatlaf-intellij-themes</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.apache.jmeter</groupId>
             <artifactId>ApacheJMeter_core</artifactId>
         </dependency>
@@ -46,8 +50,8 @@
                             <goal>copy-dependencies</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>C:/Users/Navee/tools/apache-jmeter-5.6.3/lib</outputDirectory>
-                            <includeArtifactIds>flatlaf,gson</includeArtifactIds>
+                            <outputDirectory>C:/Users/Navee/tools/apache-jmeter-5.6.3/lib/ext</outputDirectory>
+                            <includeArtifactIds>flatlaf,flatlaf-intellij-themes,gson</includeArtifactIds>
                             <overWriteReleases>true</overWriteReleases>
                             <overWriteSnapshots>true</overWriteSnapshots>
                         </configuration>
