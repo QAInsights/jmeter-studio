@@ -10,6 +10,8 @@ import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JSeparator;
 import javax.swing.MenuElement;
 import java.awt.event.ActionEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * JMeter plugin entry point. Implements {@link MenuCreator} to add theme items
@@ -20,6 +22,8 @@ import java.awt.event.ActionEvent;
  */
 public class ThemePlugin implements MenuCreator {
 
+    private static final Logger logger = LoggerFactory.getLogger(ThemePlugin.class);
+    private static final String THEME_PREFIX = "JMeter Studio";
     private JMenu themeMenu;
 
     // Static initializer to set icon properties BEFORE JMeter loads icons
@@ -29,7 +33,6 @@ public class ThemePlugin implements MenuCreator {
     }
 
     public ThemePlugin() {
-        // Apply saved theme on startup - delay to ensure UI is fully constructed
         javax.swing.SwingUtilities.invokeLater(() -> {
             ThemeManager.applyStartupTheme();
         });
@@ -59,11 +62,11 @@ public class ThemePlugin implements MenuCreator {
     }
 
     /**
-     * Creates the "Aura Themes" submenu with a radio button for each available theme,
+     * Creates the "JMeter Studio" submenu with a radio button for each available theme,
      * plus a "Restore Default" option.
      */
     private JMenu createThemeMenu() {
-        themeMenu = new JMenu("Aura Themes");
+        themeMenu = new JMenu(THEME_PREFIX);
         ButtonGroup group = new ButtonGroup();
         String activeThemeId = ThemeManager.getActiveThemeId();
 
@@ -100,15 +103,15 @@ public class ThemePlugin implements MenuCreator {
         if (descriptor.isPro()) {
             JOptionPane.showMessageDialog(null,
                     "'" + descriptor.getDisplayName() + "' is a premium theme.\n"
-                    + "Please install Aura Theme Pro to unlock it.",
-                    "Aura Theme Pro",
+                    + "Please install JMeter Studio Pro to unlock it.",
+                    "JMeter Studio Pro",
                     JOptionPane.INFORMATION_MESSAGE);
             return;
         }
 
         boolean applied = ThemeManager.applyTheme(descriptor.getId());
         if (applied) {
-            promptRestart("Theme '" + descriptor.getDisplayName() + "' has been applied.");
+            promptRestart(String.format("%s Theme '%s' has been applied.", THEME_PREFIX, descriptor.getDisplayName()));
         }
     }
 
@@ -128,7 +131,7 @@ public class ThemePlugin implements MenuCreator {
                 message + "\n"
                 + "For the best experience, we recommend restarting JMeter.\n\n"
                 + "Restart JMeter now?",
-                "Aura Theme",
+                "JMeter Studio",
                 JOptionPane.YES_NO_OPTION,
                 JOptionPane.QUESTION_MESSAGE);
 
@@ -151,7 +154,7 @@ public class ThemePlugin implements MenuCreator {
             ActionEvent restartEvent = new ActionEvent(this, ActionEvent.ACTION_PERFORMED, restartAction);
             actionRouter.getMethod("doActionNow", ActionEvent.class).invoke(router, restartEvent);
         } catch (Exception ex) {
-            System.err.println("[AuraTheme] Could not trigger restart: " + ex.getMessage());
+            logger.error("{} Could not trigger restart: {}", THEME_PREFIX, ex.getMessage());
         }
     }
 }

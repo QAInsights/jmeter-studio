@@ -33,9 +33,10 @@ import java.util.prefs.Preferences;
 public final class ThemeManager {
 
     private static final Logger logger = LoggerFactory.getLogger(ThemeManager.class);
+    private static final String THEME_PREFIX = "JMeter Studio";
     private static final String THEMES_MANIFEST = "com/qainsights/jmeter/themes/themes.json";
     private static final Preferences PREFS = Preferences.userNodeForPackage(ThemeManager.class);
-    private static final String PREF_KEY = "aura.theme.active";
+    private static final String PREF_KEY = "jmeter.studio.theme.active";
     private static final String DEFAULT_THEME = "default";
 
     /** JMeter property key for custom toolbar icons */
@@ -75,15 +76,15 @@ public final class ThemeManager {
                     if (descriptors != null) {
                         for (ThemeDescriptor desc : descriptors) {
                             themes.put(desc.getId(), desc);
-                            logger.info("[AuraTheme] Registered theme: " + desc.getDisplayName());
+                            logger.info("{} Registered theme: {}", THEME_PREFIX, desc.getDisplayName());
                         }
                     }
                 } catch (IOException e) {
-                    logger.error("[AuraTheme] Error reading themes manifest: " + e.getMessage());
+                    logger.error("{} Error reading themes manifest: {}", THEME_PREFIX, e.getMessage());
                 }
             }
         } catch (IOException e) {
-            logger.error("[AuraTheme] Error scanning for theme manifests: " + e.getMessage());
+            logger.error("{} Error scanning for theme manifests: {}", THEME_PREFIX, e.getMessage());
         }
     }
 
@@ -109,9 +110,9 @@ public final class ThemeManager {
     }
 
     /**
-     * Returns true if an Aura theme is currently active (not "default").
+     * Returns true if a Studio theme is currently active (not "default").
      */
-    public static boolean isAuraThemeActive() {
+    public static boolean isStudioThemeActive() {
         String activeId = getActiveThemeId();
         return !DEFAULT_THEME.equals(activeId) && themes.containsKey(activeId);
     }
@@ -126,7 +127,7 @@ public final class ThemeManager {
     public static boolean applyTheme(String themeId) {
         ThemeDescriptor descriptor = themes.get(themeId);
         if (descriptor == null) {
-            System.err.println("[AuraTheme] Theme not found: " + themeId);
+            logger.error("{} Theme not found: {}", THEME_PREFIX, themeId);
             return false;
         }
 
@@ -144,19 +145,19 @@ public final class ThemeManager {
             //    falls back to its own default icons.
             if (descriptor.getToolbarPropertiesPath() != null) {
                 setJMeterProperty(JMETER_TOOLBAR_ICONS_PROP, descriptor.getToolbarPropertiesPath());
-                logger.info("[AuraTheme] Set toolbar icons: " + descriptor.getToolbarPropertiesPath());
+                logger.info("{} Set toolbar icons: {}", THEME_PREFIX, descriptor.getToolbarPropertiesPath());
             } else {
                 clearJMeterProperty(JMETER_TOOLBAR_ICONS_PROP);
-                logger.info("[AuraTheme] Cleared toolbar icons (using JMeter defaults)");
+                logger.info("{} Cleared toolbar icons (using JMeter defaults)", THEME_PREFIX);
             }
 
             // 3. Set JMeter tree icons property so tree uses our icons
             if (descriptor.getTreeIconPropertiesPath() != null) {
                 setJMeterProperty(JMETER_TREE_ICONS_PROP, descriptor.getTreeIconPropertiesPath());
-                logger.info("[AuraTheme] Set tree icons: " + descriptor.getTreeIconPropertiesPath());
+                logger.info("{} Set tree icons: {}", THEME_PREFIX, descriptor.getTreeIconPropertiesPath());
             } else {
                 clearJMeterProperty(JMETER_TREE_ICONS_PROP);
-                logger.info("[AuraTheme] Cleared tree icons (using JMeter defaults)");
+                logger.info("{} Cleared tree icons (using JMeter defaults)", THEME_PREFIX);
             }
 
             // 4. Reset explicit component style overrides so the new theme's UIManager defaults apply cleanly,
@@ -180,13 +181,13 @@ public final class ThemeManager {
             try {
                 PREFS.flush();
             } catch (java.util.prefs.BackingStoreException bse) {
-                logger.warn("[AuraTheme] Warning: could not flush preferences: " + bse.getMessage());
+                logger.warn("{} Warning: could not flush preferences: {}", THEME_PREFIX, bse.getMessage());
             }
 
-            logger.info("[AuraTheme] Applied theme: " + descriptor.getDisplayName());
+            logger.info("{} Applied theme: {}", THEME_PREFIX, descriptor.getDisplayName());
             return true;
         } catch (Exception e) {
-            logger.error("[AuraTheme] Failed to apply theme '" + themeId + "': " + e.getMessage());
+            logger.error("{} Failed to apply theme '{}': {}", THEME_PREFIX, themeId, e.getMessage());
             e.printStackTrace();
             return false;
         }
@@ -207,10 +208,10 @@ public final class ThemeManager {
         try {
             PREFS.flush();
         } catch (java.util.prefs.BackingStoreException bse) {
-            logger.warn("[AuraTheme] Warning: could not flush preferences: " + bse.getMessage());
+            logger.warn("{} Warning: could not flush preferences: {}", THEME_PREFIX, bse.getMessage());
         }
 
-        logger.info("[AuraTheme] Restored default JMeter theme. Restart required.");
+        logger.info("{} Restored default JMeter theme. Restart required.", THEME_PREFIX);
     }
 
     /**
@@ -220,7 +221,7 @@ public final class ThemeManager {
         String savedTheme = getActiveThemeId();
         if (DEFAULT_THEME.equals(savedTheme)) {
             // User chose default — don't apply any Aura theme, don't set icon property
-            logger.info("[AuraTheme] Default theme selected, skipping Aura theme application.");
+            logger.info("{} Default theme selected, skipping Aura theme application.", THEME_PREFIX);
             return;
         }
         if (themes.containsKey(savedTheme)) {
@@ -246,7 +247,7 @@ public final class ThemeManager {
                     }
                 }
 
-                logger.info("[AuraTheme] Startup theme applied: " + descriptor.getDisplayName());
+                logger.info("{} Startup theme applied: {}", THEME_PREFIX, descriptor.getDisplayName());
 
                 // Schedule a delayed recolor pass — JMeter's log viewer populates AFTER
                 // the startup theme is applied, so our immediate repaintAll ran on an empty document.
@@ -254,7 +255,7 @@ public final class ThemeManager {
                     scheduleDelayedRecolor();
                 }
             } catch (Exception e) {
-                logger.error("[AuraTheme] Failed to apply startup theme: " + e.getMessage());
+                logger.error("{} Failed to apply startup theme: {}", THEME_PREFIX, e.getMessage());
             }
         }
     }
@@ -274,13 +275,13 @@ public final class ThemeManager {
             // Set toolbar icons property BEFORE JMeter loads toolbar
             if (descriptor.getToolbarPropertiesPath() != null) {
                 setJMeterProperty(JMETER_TOOLBAR_ICONS_PROP, descriptor.getToolbarPropertiesPath());
-                logger.info("[AuraTheme] Early set toolbar icons: " + descriptor.getToolbarPropertiesPath());
+                logger.info("{} Early set toolbar icons: {}", THEME_PREFIX, descriptor.getToolbarPropertiesPath());
             }
 
             // Set tree icons property BEFORE JMeter loads tree
             if (descriptor.getTreeIconPropertiesPath() != null) {
                 setJMeterProperty(JMETER_TREE_ICONS_PROP, descriptor.getTreeIconPropertiesPath());
-                logger.info("[AuraTheme] Early set tree icons: " + descriptor.getTreeIconPropertiesPath());
+                logger.info("{} Early set tree icons: {}", THEME_PREFIX, descriptor.getTreeIconPropertiesPath());
             }
         }
     }
@@ -292,11 +293,11 @@ public final class ThemeManager {
         try {
             Class<?> jmeterUtils = Class.forName("org.apache.jmeter.util.JMeterUtils");
             jmeterUtils.getMethod("setProperty", String.class, String.class).invoke(null, key, value);
-            logger.info("[AuraTheme] Set JMeter property " + key + " = " + value);
+            logger.info("{} Set JMeter property {} = {}", THEME_PREFIX, key, value);
         } catch (Exception e) {
             // Fallback: set system property
             System.setProperty(key, value);
-            logger.error("[AuraTheme] JMeterUtils not available, set system property: " + key);
+            logger.error("{} JMeterUtils not available, set system property: {}", THEME_PREFIX, key);
         }
     }
 
@@ -312,7 +313,7 @@ public final class ThemeManager {
             if (props instanceof java.util.Properties) {
                 ((java.util.Properties) props).remove(key);
             }
-            logger.info("[AuraTheme] Cleared JMeter property: " + key);
+            logger.info("{} Cleared JMeter property: {}", THEME_PREFIX, key);
         } catch (Exception e) {
             System.clearProperty(key);
         }
@@ -329,7 +330,7 @@ public final class ThemeManager {
         String className = descriptor.getLafClass();
         Class<?> themeClass = Class.forName(className);
         themeClass.getMethod("setup").invoke(null);
-        logger.info("[AuraTheme] Applied IJ theme via: " + className);
+        logger.info("{} Applied IJ theme via: {}", THEME_PREFIX, className);
     }
 
     /**
@@ -349,7 +350,7 @@ public final class ThemeManager {
                 fireMethod.invoke(null);
             }
         } catch (Exception e) {
-            logger.error("[AuraTheme] Toolbar will update on restart: " + e.getMessage());
+            logger.error("{} Toolbar will update on restart: {}", THEME_PREFIX, e.getMessage());
         }
     }
 
@@ -404,22 +405,17 @@ public final class ThemeManager {
                     if ("text/html".equals(contentType)) {
                         injectDarkThemeCSS(editorPane, editorBg, editorFg);
                     }
-                    logger.info("[AuraTheme] Set background on JEditorPane: " + editorPane.getName());
+                    logger.info("{} Set background on JEditorPane: {}", THEME_PREFIX, editorPane.getName());
                 } else if (comp instanceof javax.swing.JTextPane) {
-                    javax.swing.JTextPane textPane = (javax.swing.JTextPane) comp;
                     java.awt.Color textPaneBg = javax.swing.UIManager.getColor("TextPane.background");
                     java.awt.Color textPaneFg = javax.swing.UIManager.getColor("TextPane.foreground");
                     if (textPaneBg != null) {
-                        textPane.setBackground(textPaneBg);
+                        jcomp.setBackground(textPaneBg);
                     }
                     if (textPaneFg != null) {
-                        textPane.setForeground(textPaneFg);
-                        // Recolor existing styled text
-                        recolorStyledDocument(textPane, textPaneBg, textPaneFg);
-                        // Install a listener to recolor new text as it arrives
-                        installRecolorListener(textPane, textPaneBg, textPaneFg);
+                        jcomp.setForeground(textPaneFg);
                     }
-                    logger.info("[AuraTheme] Set colors on JTextPane: " + comp.getName());
+                    logger.info("{} Set colors on JTextPane: {}", THEME_PREFIX, comp.getName());
                 } else if (comp instanceof javax.swing.JTextArea || comp instanceof javax.swing.JTextField) {
                     java.awt.Color textAreaBg = javax.swing.UIManager.getColor("TextArea.background");
                     java.awt.Color textAreaFg = javax.swing.UIManager.getColor("TextArea.foreground");
@@ -434,25 +430,25 @@ public final class ThemeManager {
                     if (scrollBg != null) {
                         jcomp.setBackground(scrollBg);
                     }
-                    logger.info("[AuraTheme] Set background on JScrollPane: " + comp.getName());
+                    logger.info("{} Set background on JScrollPane: {}", THEME_PREFIX, comp.getName());
                 } else if (comp instanceof javax.swing.JViewport) {
                     java.awt.Color viewportBg = javax.swing.UIManager.getColor("Viewport.background");
                     if (viewportBg != null) {
                         jcomp.setBackground(viewportBg);
                     }
-                    logger.info("[AuraTheme] Set background on JViewport: " + comp.getName());
+                    logger.info("{} Set background on JViewport: {}", THEME_PREFIX, comp.getName());
                 } else if (comp instanceof javax.swing.JSplitPane) {
                     java.awt.Color splitBg = javax.swing.UIManager.getColor("SplitPane.background");
                     if (splitBg != null) {
                         jcomp.setBackground(splitBg);
                     }
-                    logger.info("[AuraTheme] Set background on JSplitPane: " + comp.getName());
+                    logger.info("{} Set background on JSplitPane: {}", THEME_PREFIX, comp.getName());
                 } else {
                     java.awt.Color panelBg = javax.swing.UIManager.getColor("Panel.background");
                     if (panelBg != null) {
                         jcomp.setBackground(panelBg);
                     }
-                    logger.info("[AuraTheme] Set background on " + comp.getClass().getSimpleName() + ": " + comp.getName());
+                    logger.info("{} Set background on {}", THEME_PREFIX, comp.getClass().getSimpleName() + (comp.getName() != null ? ": " + comp.getName() : ""));
                 }
             }
             comp.repaint();
@@ -462,8 +458,7 @@ public final class ThemeManager {
         }
     }
 
-    /** Client property key used to avoid installing duplicate recolor listeners. */
-    private static final String RECOLOR_LISTENER_KEY = "aura.recolor.installed";
+
 
     /**
      * Schedule a delayed recoloring pass. JMeter's log viewer ({@code LoggerPanel}) uses a
@@ -481,7 +476,7 @@ public final class ThemeManager {
             for (Window window : Window.getWindows()) {
                 recolorTextAreasInContainer(window, bg, fg);
             }
-            logger.info("[AuraTheme] Delayed recolor pass complete.");
+            logger.info("{} Delayed recolor pass complete.", THEME_PREFIX);
         });
         timer.setRepeats(false);
         timer.start();
@@ -565,13 +560,13 @@ public final class ThemeManager {
                     // Also set caret color
                     textArea.setCaretColor(fg);
                     textArea.repaint();
-                    logger.info("[AuraTheme] Recolored RSyntaxTextArea SyntaxScheme: " + className);
+                    logger.info("{} Recolored RSyntaxTextArea SyntaxScheme: {}", THEME_PREFIX, className);
                 }
             } catch (Exception ex) {
-                logger.error("[AuraTheme] Failed to recolor RSyntaxTextArea: " + ex.getMessage());
+                logger.error("{} Failed to recolor RSyntaxTextArea: {}", THEME_PREFIX, ex.getMessage());
             }
         } else {
-            logger.info("[AuraTheme] Recolored JTextArea: " + className);
+            logger.info("{} Recolored JTextArea: {}", THEME_PREFIX, className);
         }
     }
 
@@ -585,107 +580,6 @@ public final class ThemeManager {
     }
 
 
-
-    /**
-     * Install a {@link javax.swing.event.DocumentListener} on a JTextPane so that new text
-     * inserted with dark foreground colors (e.g. JMeter log entries) is automatically recolored
-     * to the theme's foreground.
-     *
-     * <p>Guarded by a client property to avoid installing duplicate listeners on the same pane.</p>
-     */
-    private static void installRecolorListener(javax.swing.JTextPane textPane,
-                                                java.awt.Color bgColor,
-                                                java.awt.Color fgColor) {
-        if (bgColor == null || fgColor == null) return;
-        // Only act on dark backgrounds
-        double bgLum = 0.2126 * bgColor.getRed() + 0.7152 * bgColor.getGreen() + 0.0722 * bgColor.getBlue();
-        if (bgLum >= 128) return;
-
-        // Check if we already installed a listener
-        if (Boolean.TRUE.equals(textPane.getClientProperty(RECOLOR_LISTENER_KEY))) {
-            return;
-        }
-        textPane.putClientProperty(RECOLOR_LISTENER_KEY, Boolean.TRUE);
-
-        final java.awt.Color themeFg = fgColor;
-        textPane.getStyledDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
-            @Override
-            public void insertUpdate(javax.swing.event.DocumentEvent e) {
-                // Must defer document modification to avoid IllegalStateException
-                SwingUtilities.invokeLater(() -> {
-                    javax.swing.text.StyledDocument doc = textPane.getStyledDocument();
-                    int offset = e.getOffset();
-                    int length = e.getLength();
-                    // Recolor the just-inserted range
-                    javax.swing.text.SimpleAttributeSet attrs = new javax.swing.text.SimpleAttributeSet();
-                    javax.swing.text.StyleConstants.setForeground(attrs, themeFg);
-                    doc.setCharacterAttributes(offset, length, attrs, false);
-                });
-            }
-            @Override public void removeUpdate(javax.swing.event.DocumentEvent e) {}
-            @Override public void changedUpdate(javax.swing.event.DocumentEvent e) {}
-        });
-    }
-
-    /**
-     * Recolor the styled text of a {@link javax.swing.JTextPane} so that dark-colored text
-
-     * (e.g. {@code Color.black} used by the JMeter log viewer for INFO messages) becomes readable
-     * on a dark theme background.
-     *
-     * <p>JMeter's log panel appends entries via {@link javax.swing.text.StyledDocument} character
-     * attributes with hard-coded colors. Setting {@code setForeground()} on the component itself
-     * does not affect these per-run attributes, so we walk the document and replace any foreground
-     * that is dark against the (now dark) background with the theme's foreground color.</p>
-     */
-    private static void recolorStyledDocument(javax.swing.JTextPane textPane,
-                                               java.awt.Color bgColor,
-                                               java.awt.Color fgColor) {
-        if (bgColor == null || fgColor == null) return;
-
-        // Only act when the background is dark (luminance < 128 on 0-255 scale)
-        double bgLum = 0.2126 * bgColor.getRed() + 0.7152 * bgColor.getGreen() + 0.0722 * bgColor.getBlue();
-        if (bgLum >= 128) return;
-
-        javax.swing.text.StyledDocument doc = textPane.getStyledDocument();
-        if (doc == null || doc.getLength() == 0) return;
-
-        try {
-            recolorDocumentElement(doc.getDefaultRootElement(), doc, fgColor);
-        } catch (Exception e) {
-            logger.error("[AuraTheme] Error recoloring StyledDocument: " + e.getMessage());
-        }
-    }
-
-    /**
-     * Recursively walk a document element tree and replace dark foreground attributes with
-     * {@code themeFg}.
-     */
-    private static void recolorDocumentElement(javax.swing.text.Element elem,
-                                                javax.swing.text.StyledDocument doc,
-                                                java.awt.Color themeFg) {
-        if (elem.isLeaf()) {
-            javax.swing.text.AttributeSet attrs = elem.getAttributes();
-            // Check if this run has an explicit foreground color set
-            if (attrs.isDefined(javax.swing.text.StyleConstants.Foreground)) {
-                java.awt.Color fg = javax.swing.text.StyleConstants.getForeground(attrs);
-                // Replace if the foreground is dark (luminance < 128)
-                double fgLum = 0.2126 * fg.getRed() + 0.7152 * fg.getGreen() + 0.0722 * fg.getBlue();
-                if (fgLum < 128) {
-                    javax.swing.text.SimpleAttributeSet replacement = new javax.swing.text.SimpleAttributeSet();
-                    javax.swing.text.StyleConstants.setForeground(replacement, themeFg);
-                    doc.setCharacterAttributes(elem.getStartOffset(),
-                            elem.getEndOffset() - elem.getStartOffset(),
-                            replacement, false);
-                }
-            }
-            return;
-        }
-        for (int i = 0; i < elem.getElementCount(); i++) {
-            recolorDocumentElement(elem.getElement(i), doc, themeFg);
-        }
-    }
-
     /**
      * Inject dark theme CSS into an HTML editor pane.
      */
@@ -695,13 +589,13 @@ public final class ThemeManager {
             String html = editorPane.getText();
             if (html != null && !html.isEmpty()) {
                 // Check if we've already injected our CSS
-                if (!html.contains("/* Aura Dark Theme CSS */")) {
+                if (!html.contains("/* JMeter Studio Dark Theme CSS */")) {
                     // Convert colors to hex
                     String bgHex = colorToHex(bgColor != null ? bgColor : java.awt.Color.decode("#231d35"));
                     String fgHex = colorToHex(fgColor != null ? fgColor : java.awt.Color.decode("#e8e0f0"));
 
                     String darkCSS = "<style type=\"text/css\">\n" +
-                            "/* Aura Dark Theme CSS */\n" +
+                            "/* JMeter Studio Dark Theme CSS */\n" +
                             "body { background-color: " + bgHex + " !important; color: " + fgHex + " !important; }\n" +
                             "table { background-color: " + bgHex + " !important; }\n" +
                             "td, th { background-color: " + bgHex + " !important; color: " + fgHex + " !important; }\n" +
@@ -719,7 +613,7 @@ public final class ThemeManager {
             }
         } catch (Exception e) {
             // Ignore errors during CSS injection
-            logger.error("[AuraTheme] Error injecting CSS: " + e.getMessage());
+            logger.error("{} Error injecting CSS: {}", THEME_PREFIX, e.getMessage());
         }
     }
 

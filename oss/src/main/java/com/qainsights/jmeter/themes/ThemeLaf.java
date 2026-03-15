@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 public class ThemeLaf extends FlatPropertiesLaf {
 
     private final ThemeDescriptor descriptor;
+    private static final String THEME_PREFIX = "JMeter Studio";
     private static final Logger logger = LoggerFactory.getLogger(ThemeLaf.class);
 
     public ThemeLaf(ThemeDescriptor descriptor) {
@@ -37,11 +38,11 @@ public class ThemeLaf extends FlatPropertiesLaf {
     private static ThemeDescriptor getActiveThemeDescriptor() {
         String activeThemeId = ThemeManager.getActiveThemeId();
         if ("default".equals(activeThemeId)) {
-            throw new IllegalStateException("Cannot instantiate ThemeLaf when default JMeter theme is active");
+            throw new IllegalStateException(THEME_PREFIX + " Cannot instantiate ThemeLaf when default JMeter theme is active");
         }
         ThemeDescriptor descriptor = ThemeManager.getTheme(activeThemeId);
         if (descriptor == null) {
-            throw new IllegalStateException("Active theme not found: " + activeThemeId);
+            throw new IllegalStateException(String.format("%s Active theme not found: %s", THEME_PREFIX, activeThemeId));
         }
         return descriptor;
     }
@@ -53,7 +54,7 @@ public class ThemeLaf extends FlatPropertiesLaf {
 
     @Override
     public String getDescription() {
-        return "Aura Theme: " + descriptor.getDisplayName();
+        return THEME_PREFIX + ": " + descriptor.getDisplayName();
     }
 
     @Override
@@ -72,10 +73,10 @@ public class ThemeLaf extends FlatPropertiesLaf {
                 if (is != null) {
                     props.load(is);
                 } else {
-                    logger.error("[AuraTheme] Could not find theme properties: " + path);
+                    logger.error("{} Could not find theme properties: {}", THEME_PREFIX, path);
                 }
             } catch (IOException e) {
-                logger.error("[AuraTheme] Error loading theme properties: " + e.getMessage());
+                logger.error("{} Error loading theme properties: {}", THEME_PREFIX, e.getMessage());
             }
         }
         return props;
