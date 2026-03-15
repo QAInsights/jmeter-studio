@@ -88,5 +88,40 @@
     "lafClass": "com.formdev.flatlaf.intellijthemes.FlatGrayIJTheme",
     "dark": false,
     "pro": false
+  },
+  {
+    "id": "github-light",
+    "displayName": "GitHub (Light)",
+    "lafClass": "com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatGitHubIJTheme",
+    "dark": false,
+    "pro": false
+  },
+  {
+    "id": "moonlight",
+    "displayName": "Moonlight",
+    "lafClass": "com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatMoonlightIJTheme",
+    "dark": true,
+    "pro": false
+  },
+  {
+    "id": "oceanic",
+    "displayName": "Material Oceanic",
+    "lafClass": "com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatMaterialOceanicIJTheme",
+    "dark": true,
+    "pro": false
+  },
+  {
+    "id": "deep-ocean",
+    "displayName": "Material Deep Ocean",
+    "lafClass": "com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatMaterialDeepOceanIJTheme",
+    "dark": true,
+    "pro": false
+  },
+  {
+    "id": "palenight",
+    "displayName": "Material Palenight",
+    "lafClass": "com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatMaterialPalenightIJTheme",
+    "dark": true,
+    "pro": false
   }
 ]
