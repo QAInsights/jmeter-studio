@@ -19,7 +19,7 @@ A modern, extensible theme engine for Apache JMeter featuring both dark and ligh
 
 ### Manual Installation
 
-1. Download the latest `aura-theme-1.0.0-SNAPSHOT.jar` from the releases page
+1. Download the latest `jmeter-studio-oss-1.0.0-SNAPSHOT.jar` from the releases page
 2. Copy the JAR file to your JMeter installation's `lib/ext` directory:
    ```
    C:\Users\<username>\tools\apache-jmeter-5.6.3\lib\ext\
@@ -40,7 +40,7 @@ cd jmeter-studio
 mvn clean package -DskipTests
 
 # The plugin JAR will be available at:
-# oss/target/aura-theme-1.0.0-SNAPSHOT.jar
+# oss/target/jmeter-studio-oss-1.0.0-SNAPSHOT.jar
 ```
 
 ### Selecting a Theme

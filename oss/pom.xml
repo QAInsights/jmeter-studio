@@ -10,7 +10,7 @@
         <version>1.0.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>aura-theme</artifactId>
+    <artifactId>jmeter-studio-oss</artifactId>
     <packaging>jar</packaging>
 
     <name>JMeter Studio</name>
