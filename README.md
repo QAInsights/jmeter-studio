@@ -2,6 +2,8 @@
 
 A modern, extensible theme engine for Apache JMeter featuring both dark and light themes with custom icon sets.
 
+![JMeter Studio](./images/jmeter-studio.png)
+
 ## Features
 
 - **Aura Dark Theme**: A sleek dark theme with purple accents for comfortable low-light usage
