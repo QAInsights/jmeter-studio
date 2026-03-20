@@ -9,10 +9,7 @@ import java.util.Properties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * Generic FlatLaf subclass that loads theme-specific properties at runtime.
- * Works for both dark and light themes — the base class is chosen from the descriptor.
- */
+
 public class ThemeLaf extends FlatPropertiesLaf {
 
     private final ThemeDescriptor descriptor;
@@ -24,17 +21,10 @@ public class ThemeLaf extends FlatPropertiesLaf {
         this.descriptor = descriptor;
     }
 
-    /**
-     * No-arg constructor required by JMeter's zoom functionality.
-     * Re-instantiates the currently active theme from ThemeManager.
-     */
     public ThemeLaf() {
         this(getActiveThemeDescriptor());
     }
 
-    /**
-     * Retrieves the currently active theme descriptor from ThemeManager.
-     */
     private static ThemeDescriptor getActiveThemeDescriptor() {
         String activeThemeId = ThemeManager.getActiveThemeId();
         if ("default".equals(activeThemeId)) {
@@ -62,9 +52,6 @@ public class ThemeLaf extends FlatPropertiesLaf {
         return descriptor.isDark();
     }
 
-    /**
-     * Loads the .properties file for the given theme descriptor from classpath.
-     */
     private static Properties loadProperties(ThemeDescriptor descriptor) {
         Properties props = new Properties();
         String path = descriptor.getPropertiesPath();

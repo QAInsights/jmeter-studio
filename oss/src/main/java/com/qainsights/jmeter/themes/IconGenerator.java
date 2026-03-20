@@ -9,33 +9,17 @@ import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-/**
- * Generates the Aura icon pack programmatically.
- *
- * Usage:
- *   java -cp target/classes com.qainsights.jmeter.themes.IconGenerator [baseDir] [mode]
- *
- * mode: "dark" or "light" (default: dark)
- *
- * Follows the Swing icon design skill rules:
- * - Background card behind every icon
- * - Minimum stroke widths (2.0f+ for small icons)
- * - Filled shapes always have outlines
- * - Colors resolved per surface context
- */
 public class IconGenerator {
 
-    // Color scheme — set based on mode
-    private Color PRIMARY;      // main stroke color
-    private Color SECONDARY;    // secondary strokes
-    private Color ACCENT;       // accent/branding color
-    private Color SUCCESS;      // start/run/ok
-    private Color DANGER;       // stop/error
-    private Color WARNING;      // warning/caution
-    private Color MUTED;        // decorative/secondary
-    private Color INFO;         // informational blue
+    private Color PRIMARY;      
+    private Color SECONDARY;    
+    private Color ACCENT;       
+    private Color SUCCESS;      
+    private Color DANGER;       
+    private Color WARNING;      
+    private Color MUTED;        
+    private Color INFO;         
 
-    // Background card colors
     private Color CARD_FILL;
     private Color CARD_BORDER;
 
@@ -49,31 +33,28 @@ public class IconGenerator {
     public IconGenerator(boolean dark) {
         this.isDark = dark;
         if (dark) {
-            // Dark mode: light strokes for dark backgrounds
-            PRIMARY     = new Color(0xCD, 0xCE, 0xCF);  // soft white
-            SECONDARY   = new Color(0x9b, 0x8f, 0xb8);  // muted lavender
-            ACCENT      = new Color(0x7c, 0x3a, 0xed);  // purple
-            SUCCESS     = new Color(0x44, 0xAD, 0x54);  // green
-            DANGER      = new Color(0xEF, 0x44, 0x44);  // red
-            WARNING     = new Color(0xFB, 0xBF, 0x24);  // amber
-            MUTED       = new Color(0x6B, 0x6F, 0x73);  // grey
-            INFO        = new Color(0x60, 0xA5, 0xFA);  // blue
-            CARD_FILL   = new Color(0x2d, 0x25, 0x45, 220);  // dark surface
-            CARD_BORDER = new Color(0x3d, 0x35, 0x55, 240);  // subtle border
+            PRIMARY     = new Color(0xCD, 0xCE, 0xCF);  
+            SECONDARY   = new Color(0x9b, 0x8f, 0xb8);  
+            ACCENT      = new Color(0x7c, 0x3a, 0xed);  
+            SUCCESS     = new Color(0x44, 0xAD, 0x54);  
+            DANGER      = new Color(0xEF, 0x44, 0x44);  
+            WARNING     = new Color(0xFB, 0xBF, 0x24);  
+            MUTED       = new Color(0x6B, 0x6F, 0x73);  
+            INFO        = new Color(0x60, 0xA5, 0xFA);  
+            CARD_FILL   = new Color(0x2d, 0x25, 0x45, 220);  
+            CARD_BORDER = new Color(0x3d, 0x35, 0x55, 240);  
         } else {
-            // Light mode: high-contrast dark-lavender strokes for light backgrounds
-            PRIMARY     = new Color(0x4A, 0x3A, 0x63);  // rich navy purple
-            SECONDARY   = new Color(0x6b, 0x60, 0x80);  // muted purple
-            ACCENT      = new Color(0x7c, 0x3a, 0xed);  // vibrant purple
-            SUCCESS     = new Color(0x16, 0xA3, 0x4A);  // vibrant green
-            DANGER      = new Color(0xDC, 0x26, 0x26);  // vibrant red
-            WARNING     = new Color(0xD9, 0x77, 0x06);  // amber
-            MUTED       = new Color(0x94, 0xA3, 0xB8);  // slate grey
-            INFO        = new Color(0x25, 0x63, 0xEB);  // royal blue
-            CARD_FILL   = new Color(255, 255, 255, 180);  // semi-transparent white card
-            CARD_BORDER = new Color(0, 0, 0, 40);         // soft border
+            PRIMARY     = new Color(0x4A, 0x3A, 0x63);  
+            SECONDARY   = new Color(0x6b, 0x60, 0x80);  
+            ACCENT      = new Color(0x7c, 0x3a, 0xed);  
+            SUCCESS     = new Color(0x16, 0xA3, 0x4A);  
+            DANGER      = new Color(0xDC, 0x26, 0x26);  
+            WARNING     = new Color(0xD9, 0x77, 0x06);  
+            MUTED       = new Color(0x94, 0xA3, 0xB8);  
+            INFO        = new Color(0x25, 0x63, 0xEB);  
+            CARD_FILL   = new Color(255, 255, 255, 180);  
+            CARD_BORDER = new Color(0, 0, 0, 40);         
         }
-        System.out.println("[IconGenerator] Mode: " + (dark ? "DARK" : "LIGHT"));
     }
 
     public static void main(String[] args) throws IOException {
@@ -158,8 +139,6 @@ public class IconGenerator {
                         entry.getKey() + ".png", size, entry.getValue());
             }
         }
-
-        System.out.println("[IconGenerator] " + (isDark ? "Dark" : "Light") + " icon generation complete!");
     }
 
     private void generateIcon(String dir, String filename, int size, IconPainter painter) throws IOException {
@@ -169,15 +148,10 @@ public class IconGenerator {
         g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
         g.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
 
-        // Clear to transparent
         g.setComposite(AlphaComposite.Clear);
         g.fillRect(0, 0, size, size);
         g.setComposite(AlphaComposite.SrcOver);
-
-        // Paint background card (Rule 2 from skill)
         paintBackgroundCard(g, size);
-
-        // Paint icon content
         painter.paint(g, size);
         g.dispose();
 
@@ -188,7 +162,6 @@ public class IconGenerator {
 
     /**
      * Paints a rounded rectangle background card behind each icon.
-     * This guarantees contrast on any surface (Rule 2).
      */
     private void paintBackgroundCard(Graphics2D g, int size) {
         float sc = s(size);
@@ -206,7 +179,7 @@ public class IconGenerator {
     }
 
     private float s(int size) {
-        return size / 48f; // scale factor relative to 48px base
+        return size / 48f;
     }
 
     /**
@@ -230,14 +203,11 @@ public class IconGenerator {
         g.draw(shape);
     }
 
-    // ==================== TREE ICONS ====================
-
     void drawTestPlan(Graphics2D g, int size) {
         float sc = s(size);
         float cx = size / 2f;
         g.setColor(ACCENT);
         g.setStroke(stroke(size, 2.5f));
-        // Flask/beaker
         Path2D flask = new Path2D.Float();
         flask.moveTo(cx - 8 * sc, 6 * sc);
         flask.lineTo(cx - 8 * sc, 18 * sc);
@@ -249,7 +219,6 @@ public class IconGenerator {
         flask.lineTo(cx + 8 * sc, 6 * sc);
         flask.closePath();
         g.draw(flask);
-        // Liquid fill with outline
         Path2D liquid = new Path2D.Float();
         liquid.moveTo(cx - 12 * sc, 30 * sc);
         liquid.lineTo(cx - 16 * sc, 36 * sc);
@@ -260,7 +229,6 @@ public class IconGenerator {
         liquid.closePath();
         Color liquidFill = new Color(ACCENT.getRed(), ACCENT.getGreen(), ACCENT.getBlue(), 100);
         fillWithOutline(g, liquid, liquidFill, ACCENT, size);
-        // Top rim
         g.setColor(PRIMARY);
         g.setStroke(stroke(size, 2f));
         g.draw(new Line2D.Float(cx - 10 * sc, 6 * sc, cx + 10 * sc, 6 * sc));
@@ -273,12 +241,10 @@ public class IconGenerator {
         g.setStroke(stroke(size, 2.5f));
         float r = 16 * sc;
         g.draw(new Ellipse2D.Float(cx - r, cy - r + 2 * sc, r * 2, r * 2));
-        // Clock hands
         g.setColor(ACCENT);
         g.setStroke(stroke(size, 2.5f));
         g.draw(new Line2D.Float(cx, cy + 2 * sc, cx, cy - 6 * sc + 2 * sc));
         g.draw(new Line2D.Float(cx, cy + 2 * sc, cx + 6 * sc, cy + 2 * sc));
-        // Top button
         g.setColor(PRIMARY);
         g.draw(new Line2D.Float(cx - 3 * sc, 4 * sc, cx + 3 * sc, 4 * sc));
     }

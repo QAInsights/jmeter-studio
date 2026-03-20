@@ -43,19 +43,18 @@ mvn clean package -DskipTests
 # oss/target/aura-theme-1.0.0-SNAPSHOT.jar
 ```
 
-## Usage
-
 ### Selecting a Theme
 
 1. Open JMeter
-2. Go to **Options** → **Theme**
-3. Select either **Aura Dark** or **Aura Light**
-4. JMeter will apply the theme immediately
+2. Go to **Options** → **JMeter Studio**
+3. Select your desired theme (e.g., **Aura Dark**, **Aura Light**, etc.)
+4. The theme will be applied immediately. For the best experience, we recommend restarting JMeter.
 
 ### Switching Back to Default
 
-1. Go to **Options** → **Theme** → **Default**
-2. Restart JMeter to restore the original JMeter theme
+1. Go to **Options** → **JMeter Studio** → **Restore Default**
+2. The original JMeter Look and Feel will be restored immediately.
+3. Restart JMeter to fully revert all session-based UI adjustments.
 
 ### Building
 

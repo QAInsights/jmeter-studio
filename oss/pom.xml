@@ -13,8 +13,8 @@
     <artifactId>aura-theme</artifactId>
     <packaging>jar</packaging>
 
-    <name>Aura Theme - OSS</name>
-    <description>Free theme engine and Aura Dark theme for Apache JMeter</description>
+    <name>JMeter Studio</name>
+    <description>Free theme engine and themes for Apache JMeter</description>
 
     <dependencies>
         <dependency>
@@ -30,6 +30,18 @@
             <artifactId>ApacheJMeter_core</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>5.10.2</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>5.11.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
         </dependency>
@@ -37,6 +49,12 @@
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.2.5</version>
+            </plugin>
+
             <!-- Copy JAR and dependencies to JMeter lib for testing -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

@@ -58,19 +58,13 @@ public class ThemePlugin implements MenuCreator {
 
     @Override
     public void localeChanged() {
-        // No locale-sensitive strings in theme names
     }
 
-    /**
-     * Creates the "JMeter Studio" submenu with a radio button for each available theme,
-     * plus a "Restore Default" option.
-     */
     private JMenu createThemeMenu() {
         themeMenu = new JMenu(THEME_PREFIX);
         ButtonGroup group = new ButtonGroup();
         String activeThemeId = ThemeManager.getActiveThemeId();
 
-        // "Restore Default" option to switch back to JMeter's default theme
         JRadioButtonMenuItem restoreItem = new JRadioButtonMenuItem("Restore Default");
         restoreItem.setSelected("default".equals(activeThemeId));
         restoreItem.addActionListener(e -> onRestoreDefault());
@@ -79,11 +73,10 @@ public class ThemePlugin implements MenuCreator {
 
         themeMenu.add(new JSeparator());
 
-        // Add each registered theme
         for (ThemeDescriptor descriptor : ThemeManager.getAvailableThemes().values()) {
             String label = descriptor.getDisplayName();
             if (descriptor.isPro()) {
-                label += " \u2605"; // Star marker for Pro themes
+                label += " \u2605";
             }
 
             JRadioButtonMenuItem item = new JRadioButtonMenuItem(label);
@@ -96,9 +89,6 @@ public class ThemePlugin implements MenuCreator {
         return themeMenu;
     }
 
-    /**
-     * Handles theme selection from the menu.
-     */
     private void onThemeSelected(ThemeDescriptor descriptor) {
         if (descriptor.isPro()) {
             JOptionPane.showMessageDialog(null,
@@ -115,17 +105,12 @@ public class ThemePlugin implements MenuCreator {
         }
     }
 
-    /**
-     * Restores JMeter's default theme and clears Aura toolbar icons.
-     */
+ 
     private void onRestoreDefault() {
         ThemeManager.restoreDefault();
         promptRestart("Default JMeter theme restored.");
     }
 
-    /**
-     * Prompts the user to restart JMeter for the best experience.
-     */
     private void promptRestart(String message) {
         int result = JOptionPane.showConfirmDialog(null,
                 message + "\n"
@@ -140,9 +125,6 @@ public class ThemePlugin implements MenuCreator {
         }
     }
 
-    /**
-     * Trigger JMeter restart via action system.
-     */
     private void triggerRestart() {
         try {
             Class<?> actionRouter = Class.forName("org.apache.jmeter.gui.action.ActionRouter");
