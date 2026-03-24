@@ -7,7 +7,7 @@
     <parent>
         <groupId>com.qainsights.jmeter</groupId>
         <artifactId>aura-theme-parent</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
+        <version>1.0.2</version>
     </parent>
 
     <artifactId>jmeter-studio-oss</artifactId>
@@ -55,29 +55,43 @@
                 <version>3.2.5</version>
             </plugin>
 
-            <!-- Copy JAR and dependencies to JMeter lib for testing -->
+            <!-- Build fat JAR with all runtime dependencies bundled -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <version>3.6.1</version>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.5.2</version>
                 <executions>
                     <execution>
-                        <id>copy-dependencies</id>
-                        <phase>install</phase>
+                        <phase>package</phase>
                         <goals>
-                            <goal>copy-dependencies</goal>
+                            <goal>shade</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>C:/Users/Navee/tools/apache-jmeter-5.6.3/lib/ext</outputDirectory>
-                            <includeArtifactIds>flatlaf,flatlaf-intellij-themes,gson</includeArtifactIds>
-                            <overWriteReleases>true</overWriteReleases>
-                            <overWriteSnapshots>true</overWriteSnapshots>
+                            <shadedArtifactAttached>false</shadedArtifactAttached>
+                            <createDependencyReducedPom>false</createDependencyReducedPom>
+                            <artifactSet>
+                                <excludes>
+                                    <exclude>org.apache.jmeter:*</exclude>
+                                    <exclude>org.junit.jupiter:*</exclude>
+                                    <exclude>org.mockito:*</exclude>
+                                </excludes>
+                            </artifactSet>
+                            <filters>
+                                <filter>
+                                    <artifact>*:*</artifact>
+                                    <excludes>
+                                        <exclude>META-INF/*.SF</exclude>
+                                        <exclude>META-INF/*.DSA</exclude>
+                                        <exclude>META-INF/*.RSA</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
 
-            <!-- Copy plugin JAR to JMeter lib/ext for testing -->
+            <!-- Copy fat JAR to JMeter lib/ext for testing -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-antrun-plugin</artifactId>
