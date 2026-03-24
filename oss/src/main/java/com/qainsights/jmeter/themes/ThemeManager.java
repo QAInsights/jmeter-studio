@@ -70,7 +70,14 @@ public final class ThemeManager {
         Type listType = new TypeToken<List<ThemeDescriptor>>() {}.getType();
 
         try {
-            Enumeration<URL> resources = ThemeManager.class.getClassLoader().getResources(THEMES_MANIFEST);
+            ClassLoader cl = ThemeManager.class.getClassLoader();
+            Enumeration<URL> resources = cl.getResources(THEMES_MANIFEST);
+            if (!resources.hasMoreElements()) {
+                cl = Thread.currentThread().getContextClassLoader();
+                if (cl != null) {
+                    resources = cl.getResources(THEMES_MANIFEST);
+                }
+            }
             while (resources.hasMoreElements()) {
                 URL url = resources.nextElement();
                 try (InputStream is = url.openStream();
