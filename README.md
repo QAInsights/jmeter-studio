@@ -2,7 +2,7 @@
 
 A modern, extensible theme engine for Apache JMeter featuring both dark and light themes with custom icon sets.
 
-![JMeter Studio](./images/jmeter-studio.png)
+![JMeter Studio](./images/JMeter-Studio.png)
 
 ## Features
 
