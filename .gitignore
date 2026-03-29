@@ -94,6 +94,19 @@ nb-configuration.xml
 .DS_Store
 
 ##############################
+## Licensing (private key — NEVER commit)
+##############################
+private.pem
+*.license
+
+##############################
+## Pro-only — NEVER push to OSS public repo
+##############################
+license-gen/
+scripts/
+development.md
+
+##############################
 ## Miscellaneous
 ##############################
 *.log

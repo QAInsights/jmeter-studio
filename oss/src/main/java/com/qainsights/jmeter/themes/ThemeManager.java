@@ -2,6 +2,7 @@ package com.qainsights.jmeter.themes;
 
 import com.formdev.flatlaf.FlatLaf;
 import com.google.gson.Gson;
+import com.qainsights.jmeter.license.LicenseGuard;
 import com.google.gson.reflect.TypeToken;
 
 import javax.swing.SwingUtilities;
@@ -212,6 +213,13 @@ public final class ThemeManager {
         }
         if (themes.containsKey(savedTheme)) {
             ThemeDescriptor descriptor = themes.get(savedTheme);
+
+            if (descriptor.isPro() && !LicenseGuard.isProLicensed()) {
+                logger.warn("{} Saved theme '{}' is pro but no valid license found. Falling back to default.",
+                        THEME_PREFIX, descriptor.getDisplayName());
+                PREFS.put(PREF_KEY, DEFAULT_THEME);
+                return;
+            }
 
             try {
                 if (descriptor.isIJTheme()) {

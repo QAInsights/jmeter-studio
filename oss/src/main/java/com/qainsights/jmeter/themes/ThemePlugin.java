@@ -1,5 +1,6 @@
 package com.qainsights.jmeter.themes;
 
+import com.qainsights.jmeter.license.LicenseGuard;
 import org.apache.jmeter.gui.plugin.MenuCreator;
 
 import javax.swing.ButtonGroup;
@@ -86,14 +87,28 @@ public class ThemePlugin implements MenuCreator {
             themeMenu.add(item);
         }
 
+        themeMenu.add(new JSeparator());
+
+        if (LicenseGuard.isProLicensed()) {
+            JMenuItem licenseItem = new JMenuItem("License: Active \u2713");
+            licenseItem.setEnabled(true);
+            licenseItem.addActionListener(e -> onShowLicenseInfo());
+            themeMenu.add(licenseItem);
+        } else {
+            JMenuItem activateItem = new JMenuItem("Activate Pro License...");
+            activateItem.addActionListener(e -> onActivateLicense());
+            themeMenu.add(activateItem);
+        }
+
         return themeMenu;
     }
 
     private void onThemeSelected(ThemeDescriptor descriptor) {
-        if (descriptor.isPro()) {
+        if (descriptor.isPro() && !LicenseGuard.isProLicensed()) {
             JOptionPane.showMessageDialog(null,
                     "'" + descriptor.getDisplayName() + "' is a premium theme.\n"
-                    + "Please install JMeter Studio Pro to unlock it.",
+                    + "Please purchase a JMeter Studio Pro license to unlock it.\n"
+                    + "Visit https://qainsights.com for more information.",
                     "JMeter Studio Pro",
                     JOptionPane.INFORMATION_MESSAGE);
             return;
@@ -106,6 +121,35 @@ public class ThemePlugin implements MenuCreator {
     }
 
  
+    private void onShowLicenseInfo() {
+        LicenseGuard.getLicenseInfo().ifPresent(info -> {
+            String expiry = info.isLifetime() ? "Lifetime" : info.getExpiresAt()
+                    .map(Object::toString).orElse("Unknown");
+            JOptionPane.showMessageDialog(null,
+                    "JMeter Studio Pro License\n\n"
+                    + "Email: " + info.getEmail() + "\n"
+                    + "Edition: " + info.getEdition() + "\n"
+                    + "Expires: " + expiry + "\n"
+                    + "License ID: " + info.getLicenseId(),
+                    "JMeter Studio Pro",
+                    JOptionPane.INFORMATION_MESSAGE);
+        });
+    }
+
+    private void onActivateLicense() {
+        JOptionPane.showMessageDialog(null,
+                "To activate JMeter Studio Pro:\n\n"
+                + "1. Purchase a license at https://qainsights.com\n"
+                + "2. Download the jmeter-studio.license file\n"
+                + "3. Place it in your JMeter bin/ directory\n"
+                + "4. Restart JMeter\n\n"
+                + "Already have a license file? Place it in:\n"
+                + "  \u2022 JMETER_HOME/bin/jmeter-studio.license\n"
+                + "  \u2022 ~/.jmeter-studio/jmeter-studio.license",
+                "Activate JMeter Studio Pro",
+                JOptionPane.INFORMATION_MESSAGE);
+    }
+
     private void onRestoreDefault() {
         ThemeManager.restoreDefault();
         promptRestart("Default JMeter theme restored.");

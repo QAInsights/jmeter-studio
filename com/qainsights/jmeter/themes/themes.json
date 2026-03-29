@@ -1,0 +1,134 @@
+[
+  {
+    "id": "mocha",
+    "displayName": "Catppuccin Mocha",
+    "propertiesPath": "com/qainsights/jmeter/themes/mocha/theme.properties",
+    "dark": true,
+    "pro": false
+  },
+  {
+    "id": "aura-dark",
+    "displayName": "Aura Dark",
+    "propertiesPath": "com/qainsights/jmeter/themes/aura-dark/theme.properties",
+    "iconDir": "com/qainsights/jmeter/themes/aura-dark",
+    "toolbarPropertiesPath": "com/qainsights/jmeter/themes/aura-dark/icons-toolbar.properties",
+    "treeIconPropertiesPath": "com/qainsights/jmeter/themes/aura-dark/icon_aura.properties",
+    "dark": true,
+    "pro": false
+  },
+  {
+    "id": "aura-light",
+    "displayName": "Aura Light",
+    "propertiesPath": "com/qainsights/jmeter/themes/aura-light/theme.properties",
+    "iconDir": "com/qainsights/jmeter/themes/aura-light",
+    "toolbarPropertiesPath": "com/qainsights/jmeter/themes/aura-light/icons-toolbar.properties",
+    "treeIconPropertiesPath": "com/qainsights/jmeter/themes/aura-light/icon_aura.properties",
+    "dark": false,
+    "pro": false
+  },
+  {
+    "id": "nord",
+    "displayName": "Nord",
+    "lafClass": "com.formdev.flatlaf.intellijthemes.FlatNordIJTheme",
+    "dark": true,
+    "pro": false
+  },
+  {
+    "id": "gruvbox",
+    "displayName": "Gruvbox Dark",
+    "lafClass": "com.formdev.flatlaf.intellijthemes.FlatGruvboxDarkHardIJTheme",
+    "dark": true,
+    "pro": false
+  },
+  {
+    "id": "solarized-dark",
+    "displayName": "Solarized Dark",
+    "lafClass": "com.formdev.flatlaf.intellijthemes.FlatSolarizedDarkIJTheme",
+    "dark": true,
+    "pro": false
+  },
+  {
+    "id": "solarized-light",
+    "displayName": "Solarized Light",
+    "lafClass": "com.formdev.flatlaf.intellijthemes.FlatSolarizedLightIJTheme",
+    "dark": false,
+    "pro": false
+  },
+  {
+    "id": "one-dark",
+    "displayName": "One Dark",
+    "lafClass": "com.formdev.flatlaf.intellijthemes.FlatOneDarkIJTheme",
+    "dark": true,
+    "pro": false
+  },
+  {
+    "id": "dracula",
+    "displayName": "Dracula",
+    "lafClass": "com.formdev.flatlaf.intellijthemes.FlatDraculaIJTheme",
+    "dark": true,
+    "pro": false
+  },
+  {
+    "id": "monokai-pro",
+    "displayName": "Monokai Pro",
+    "lafClass": "com.formdev.flatlaf.intellijthemes.FlatMonokaiProIJTheme",
+    "dark": true,
+    "pro": false
+  },
+  {
+    "id": "arc-dark",
+    "displayName": "Arc Dark",
+    "lafClass": "com.formdev.flatlaf.intellijthemes.FlatArcDarkIJTheme",
+    "dark": true,
+    "pro": false
+  },
+  {
+    "id": "gradianto-deep-ocean",
+    "displayName": "Gradianto Deep Ocean",
+    "lafClass": "com.formdev.flatlaf.intellijthemes.FlatGradiantoDeepOceanIJTheme",
+    "dark": true,
+    "pro": false
+  },
+  {
+    "id": "gray",
+    "displayName": "Gray",
+    "lafClass": "com.formdev.flatlaf.intellijthemes.FlatGrayIJTheme",
+    "dark": false,
+    "pro": false
+  },
+  {
+    "id": "github-light",
+    "displayName": "GitHub (Light)",
+    "lafClass": "com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatGitHubIJTheme",
+    "dark": false,
+    "pro": false
+  },
+  {
+    "id": "moonlight",
+    "displayName": "Moonlight",
+    "lafClass": "com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatMoonlightIJTheme",
+    "dark": true,
+    "pro": false
+  },
+  {
+    "id": "oceanic",
+    "displayName": "Material Oceanic",
+    "lafClass": "com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatMaterialOceanicIJTheme",
+    "dark": true,
+    "pro": false
+  },
+  {
+    "id": "deep-ocean",
+    "displayName": "Material Deep Ocean",
+    "lafClass": "com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatMaterialDeepOceanIJTheme",
+    "dark": true,
+    "pro": false
+  },
+  {
+    "id": "palenight",
+    "displayName": "Material Palenight",
+    "lafClass": "com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatMaterialPalenightIJTheme",
+    "dark": true,
+    "pro": false
+  }
+]
