@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+#
+# pre-push hook — prevents pro-only files from being pushed to the OSS public repo.
+# Runs automatically on every `git push`.
+#
+# Install once:
+#   git config core.hooksPath .githooks
+
+REMOTE="$1"
+REMOTE_URL="$2"
+OSS_URL="https://github.com/QAInsights/jmeter-studio.git"
+
+# Only enforce when pushing to the OSS public remote
+if [[ "$REMOTE_URL" != "$OSS_URL" ]]; then
+    exit 0
+fi
+
+PRO_ONLY=("pro/" "license-gen/" "private.pem" "development.md" "*.license" "scripts/")
+VIOLATIONS=()
+
+for path in "${PRO_ONLY[@]}"; do
+    matches=$(git ls-files -- "$path" 2>/dev/null)
+    if [[ -n "$matches" ]]; then
+        VIOLATIONS+=("$path")
+    fi
+done
+
+if [[ ${#VIOLATIONS[@]} -gt 0 ]]; then
+    echo ""
+    echo "╔══════════════════════════════════════════════════════════════╗"
+    echo "║  PUSH BLOCKED — Pro-only files detected in OSS push         ║"
+    echo "╠══════════════════════════════════════════════════════════════╣"
+    for v in "${VIOLATIONS[@]}"; do
+        echo "║  ✗ $v"
+    done
+    echo "╠══════════════════════════════════════════════════════════════╣"
+    echo "║  Push to pro-origin instead:                                ║"
+    echo "║    git push pro-origin HEAD                                 ║"
+    echo "╚══════════════════════════════════════════════════════════════╝"
+    echo ""
+    exit 1
+fi
+
+exit 0
